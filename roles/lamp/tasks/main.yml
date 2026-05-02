@@ -1,0 +1,37 @@
+---
+- name: Instalar Apache, MariaDB, PHP y PhpMyAdmin
+  zypper:
+    name:
+      - apache2
+      - mariadb
+      - php
+      - php-mysql
+      - apache2-mod_php8   # <--- AQUI ESTA EL CAMBIO
+      - phpMyAdmin
+    state: present
+  register: result_lamp
+  until: result_lamp is succeeded
+  retries: 3
+  delay: 5
+
+- name: Habilitar el modulo PHP en Apache
+  command: a2enmod php8    # <--- AQUI TAMBIEN
+  ignore_errors: yes
+
+- name: Copiar archivo de prueba PHP (info.php)
+  copy:
+    src: info.php
+    dest: /srv/www/htdocs/info.php
+    mode: '0644'
+
+- name: Asegurar que MariaDB (Base de datos) este iniciada
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+
+- name: Asegurar que Apache (Servidor Web) este iniciado
+  service:
+    name: apache2
+    state: restarted
+    enabled: yes

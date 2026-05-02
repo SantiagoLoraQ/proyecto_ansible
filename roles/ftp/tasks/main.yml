@@ -1,0 +1,23 @@
+---
+- name: Instalar el servidor FTP (vsftpd) con reintentos
+  zypper:
+    name: vsftpd
+    state: present
+  register: result_ftp
+  until: result_ftp is succeeded
+  retries: 3
+  delay: 5
+
+- name: Copiar archivo de configuracion optimizado
+  copy:
+    src: vsftpd.conf
+    dest: /etc/vsftpd.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Asegurar que el servicio FTP este iniciado y habilitado
+  service:
+    name: vsftpd
+    state: started
+    enabled: yes

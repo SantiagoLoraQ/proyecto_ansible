@@ -1,0 +1,10 @@
+---
+- name: Deploy de Servicios y Optimizacion
+  hosts: nodos
+  become: yes
+  roles:
+    - common
+    - ssh
+    - ftp
+    - samba
+    - lamp

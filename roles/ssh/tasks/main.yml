@@ -1,0 +1,6 @@
+---
+- name: Asegurar que el servicio SSH (sshd) este habilitado
+  service:
+    name: sshd
+    state: started
+    enabled: yes

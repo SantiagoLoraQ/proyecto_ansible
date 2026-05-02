@@ -1,0 +1,32 @@
+---
+- name: Instalar servidor Samba con reintentos
+  zypper:
+    name: samba
+    state: present
+  register: result_samba
+  until: result_samba is succeeded
+  retries: 3
+  delay: 5
+
+- name: Crear el directorio fisico para compartir
+  file:
+    path: /srv/samba/compartido
+    state: directory
+    mode: '0777'
+
+- name: Copiar configuracion estricta de Samba
+  copy:
+    src: smb.conf
+    dest: /etc/samba/smb.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Asegurar que los servicios smb y nmb esten iniciados
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - smb
+    - nmb
