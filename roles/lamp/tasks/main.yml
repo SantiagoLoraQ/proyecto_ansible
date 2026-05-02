@@ -6,7 +6,7 @@
       - mariadb
       - php
       - php-mysql
-      - apache2-mod_php8   # <--- AQUI ESTA EL CAMBIO
+      - apache2-mod_php8
       - phpMyAdmin
     state: present
   register: result_lamp
@@ -15,14 +15,8 @@
   delay: 5
 
 - name: Habilitar el modulo PHP en Apache
-  command: a2enmod php8    # <--- AQUI TAMBIEN
+  command: a2enmod php8
   ignore_errors: yes
-
-- name: Copiar archivo de prueba PHP (info.php)
-  copy:
-    src: info.php
-    dest: /srv/www/htdocs/info.php
-    mode: '0644'
 
 - name: Asegurar que MariaDB (Base de datos) este iniciada
   service:
@@ -30,7 +24,27 @@
     state: started
     enabled: yes
 
-- name: Asegurar que Apache (Servidor Web) este iniciado
+- name: Establecer contrasena para el usuario root de MySQL (Requisito del Ing.)
+  command: >
+    mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'mundolibre'; FLUSH PRIVILEGES;"
+  ignore_errors: yes
+
+- name: Crear base de datos 'prueba'
+  command: mysql -u root -p'mundolibre' -e "CREATE DATABASE IF NOT EXISTS prueba;"
+  ignore_errors: yes
+
+- name: Copiar phpMyAdmin al Document Root de Apache (El "camino sencillo" del Ing.)
+  command: cp -r /usr/share/phpMyAdmin /srv/www/htdocs/
+  args:
+    creates: /srv/www/htdocs/phpMyAdmin
+
+- name: Copiar archivo de prueba PHP (info.php)
+  copy:
+    src: info.php
+    dest: /srv/www/htdocs/info.php
+    mode: '0644'
+
+- name: Asegurar que Apache (Servidor Web) este iniciado y reiniciado
   service:
     name: apache2
     state: restarted

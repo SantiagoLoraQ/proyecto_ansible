@@ -1,0 +1,22 @@
+---
+- name: Instalar Python 3.11 y pip (con reintentos)
+  zypper:
+    name:
+      - python311
+      - python311-pip
+    state: present
+  register: result_python
+  until: result_python is succeeded
+  retries: 3
+  delay: 5
+
+- name: Instalar mysql-connector-python usando pip3.11
+  pip:
+    name: mysql-connector-python
+    executable: pip3.11
+
+- name: Copiar script de prueba de Python (pybd.py)
+  copy:
+    src: pybd.py
+    dest: /root/pybd.py
+    mode: '0755'
