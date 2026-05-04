@@ -1,5 +1,6 @@
+
 ---
-- name: Instalar Python 3.11 y pip (con reintentos)
+- name: Instalar Python 3.11 y pip
   zypper:
     name:
       - python311

@@ -18,13 +18,13 @@
   command: a2enmod php8
   ignore_errors: yes
 
-- name: Asegurar que MariaDB (Base de datos) este iniciada
+- name: Asegurar que MariaDB (MySQL) este iniciada
   service:
     name: mariadb
     state: started
     enabled: yes
 
-- name: Establecer contrasena para el usuario root de MySQL (Requisito del Ing.)
+- name: Establecer contrasena para el usuario root de MySQL 
   command: >
     mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'mundolibre'; FLUSH PRIVILEGES;"
   ignore_errors: yes
@@ -33,7 +33,7 @@
   command: mysql -u root -p'mundolibre' -e "CREATE DATABASE IF NOT EXISTS prueba;"
   ignore_errors: yes
 
-- name: Copiar phpMyAdmin al Document Root de Apache (El "camino sencillo" del Ing.)
+- name: Copiar phpMyAdmin al Document Root de Apache
   command: cp -r /usr/share/phpMyAdmin /srv/www/htdocs/
   args:
     creates: /srv/www/htdocs/phpMyAdmin

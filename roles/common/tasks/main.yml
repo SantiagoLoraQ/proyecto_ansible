@@ -1,12 +1,12 @@
 ---
-# 1. Limpiar procesos que puedan atascar la instalacion (Requisito del Ing.)
+# 1. Limpiar procesos que puedan atascar la instalacion
 - name: Matar procesos zombis de PackageKit o zypper
   shell: |
     fuser -k /var/run/zypp.pid || true
     killall -9 packagekitd || true
   ignore_errors: yes
 
-# 2. Optimizar actualizacion de repositorios con Reintentos (Requisito del Ing.)
+# 2. Optimizar actualizacion de repositorios con Reintentos
 - name: Refrescar repositorios (con reintentos en caso de falla de red)
   command: zypper --non-interactive refresh
   register: repo_update
